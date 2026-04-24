@@ -1,0 +1,144 @@
+{
+  "restaurant": "Sharma Dhaba",
+  "tagline": "Taste the Tradition",
+  "address": "Main Road, Your Town",
+  "phone": "9876543210",
+  "dishes": [
+    {
+      "id": 1,
+      "name": { "en": "Chicken Biryani", "hi": "चिकन बिरयानी", "bn": "চিকেন বিরিয়ানি" },
+      "price": 120,
+      "category": { "en": "Main Course", "hi": "मुख्य व्यंजन", "bn": "মূল কোর্স" },
+      "type": "nonveg",
+      "spice": 4,
+      "chef": true,
+      "bestseller": true,
+      "isNew": false,
+      "rating": 4.8,
+      "reviews": 124,
+      "ingredients": {
+        "en": "Rice, Chicken, Saffron, Onion, Curd, Spices",
+        "hi": "चावल, चिकन, केसर, प्याज, दही, मसाले",
+        "bn": "ভাত, মুরগি, জাফরান, পেঁয়াজ, দই, মশলা"
+      },
+      "description": {
+        "en": "Slow cooked aromatic biryani with tender chicken marinated in special spices, cooked on dum for 2 hours.",
+        "hi": "विशेष मसालों में मैरीनेट किए गए मुलायम चिकन के साथ धीमी आंच पर पकाई गई सुगंधित बिरयानी।",
+        "bn": "বিশেষ মশলায় মেরিনেট করা নরম মুরগির সাথে ধীরে রান্না করা সুগন্ধি বিরিয়ানি।"
+      },
+      "photo": "photos/biryani.jpg",
+      "reviewsList": [
+        { "name": "Rahul S.", "stars": 5, "comment": "Best biryani in town! Amazing aroma." },
+        { "name": "Priya M.", "stars": 5, "comment": "Perfectly cooked, will order again!" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": { "en": "Paneer Butter Masala", "hi": "पनीर बटर मसाला", "bn": "পনির বাটার মাসালা" },
+      "price": 150,
+      "category": { "en": "Main Course", "hi": "मुख्य व्यंजन", "bn": "মূল কোর্স" },
+      "type": "veg",
+      "spice": 2,
+      "chef": false,
+      "bestseller": true,
+      "isNew": false,
+      "rating": 4.6,
+      "reviews": 89,
+      "ingredients": {
+        "en": "Paneer, Butter, Tomato, Cream, Cashew, Spices",
+        "hi": "पनीर, मक्खन, टमाटर, क्रीम, काजू, मसाले",
+        "bn": "পনির, মাখন, টমেটো, ক্রিম, কাজু, মশলা"
+      },
+      "description": {
+        "en": "Rich and creamy paneer curry in buttery tomato gravy with cashew paste for extra richness.",
+        "hi": "काजू पेस्ट के साथ मक्खनदार टमाटर ग्रेवी में समृद्ध और मलाईदार पनीर करी।",
+        "bn": "কাজু পেস্ট সহ মাখনযুক্ত টমেটো গ্রেভিতে সমৃদ্ধ এবং ক্রিমি পনির কারি।"
+      },
+      "photo": "photos/paneer.jpg",
+      "reviewsList": [
+        { "name": "Sneha P.", "stars": 5, "comment": "Creamy and delicious! Perfect with naan." }
+      ]
+    },
+    {
+      "id": 3,
+      "name": { "en": "Dal Makhani", "hi": "दाल मखनी", "bn": "ডাল মাখানি" },
+      "price": 90,
+      "category": { "en": "Main Course", "hi": "मुख्य व्यंजन", "bn": "মূল কোর্স" },
+      "type": "veg",
+      "spice": 2,
+      "chef": false,
+      "bestseller": false,
+      "isNew": false,
+      "rating": 4.4,
+      "reviews": 67,
+      "ingredients": {
+        "en": "Black Dal, Butter, Cream, Tomato, Garlic, Spices",
+        "hi": "काली दाल, मक्खन, क्रीम, टमाटर, लहसुन, मसाले",
+        "bn": "কালো ডাল, মাখন, ক্রিম, টমেটো, রসুন, মশলা"
+      },
+      "description": {
+        "en": "Slow cooked overnight dal with rich creamy texture. A classic comfort food.",
+        "hi": "रात भर धीमी आंच पर पकाई गई दाल, समृद्ध मलाईदार बनावट के साथ।",
+        "bn": "রাতভর ধীরে রান্না করা ডাল, সমৃদ্ধ ক্রিমি টেক্সচার সহ।"
+      },
+      "photo": "photos/dal.jpg",
+      "reviewsList": [
+        { "name": "Anita R.", "stars": 5, "comment": "Tastes just like home!" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": { "en": "Butter Naan", "hi": "बटर नान", "bn": "বাটার নান" },
+      "price": 40,
+      "category": { "en": "Breads", "hi": "रोटी", "bn": "রুটি" },
+      "type": "veg",
+      "spice": 0,
+      "chef": false,
+      "bestseller": false,
+      "isNew": false,
+      "rating": 4.5,
+      "reviews": 201,
+      "ingredients": {
+        "en": "Flour, Butter, Yeast, Salt, Milk",
+        "hi": "आटा, मक्खन, खमीर, नमक, दूध",
+        "bn": "আটা, মাখন, খামির, লবণ, দুধ"
+      },
+      "description": {
+        "en": "Soft fluffy naan baked fresh in our tandoor and brushed generously with butter.",
+        "hi": "तंदूर में ताजा बेक किया गया नरम नान, भरपूर मक्खन के साथ।",
+        "bn": "তন্দুরে তাজা বেক করা নরম নান, প্রচুর মাখন দিয়ে।"
+      },
+      "photo": "photos/naan.jpg",
+      "reviewsList": [
+        { "name": "Deepak M.", "stars": 5, "comment": "Perfectly soft and buttery!" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": { "en": "Mango Lassi", "hi": "आम की लस्सी", "bn": "আমের লাচ্ছি" },
+      "price": 60,
+      "category": { "en": "Drinks", "hi": "पेय पदार्थ", "bn": "পানীয়" },
+      "type": "veg",
+      "spice": 0,
+      "chef": true,
+      "bestseller": false,
+      "isNew": true,
+      "rating": 4.7,
+      "reviews": 45,
+      "ingredients": {
+        "en": "Alphonso Mango, Fresh Curd, Sugar, Milk, Cardamom",
+        "hi": "अल्फांसो आम, ताजा दही, चीनी, दूध, इलायची",
+        "bn": "আলফানসো আম, তাজা দই, চিনি, দুধ, এলাচ"
+      },
+      "description": {
+        "en": "Thick refreshing mango lassi made with fresh Alphonso mangoes. Our summer special!",
+        "hi": "ताजे अल्फांसो आम से बनी गाढ़ी और ताज़गी भरी आम की लस्सी।",
+        "bn": "তাজা আলফানসো আম দিয়ে তৈরি ঘন এবং সতেজ আমের লাচ্ছি।"
+      },
+      "photo": "photos/lassi.jpg",
+      "reviewsList": [
+        { "name": "Kavya S.", "stars": 5, "comment": "So thick and refreshing!" }
+      ]
+    }
+  ]
+}
