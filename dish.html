@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Dish Details</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f0e8;--bg2:#ede8de;--bg3:#e4ddd1;
+  --espresso:#1c1208;--espresso2:#2e1f0d;--espresso3:#3d2b14;
+  --brass:#b8892a;--brass2:#d4a740;--brass3:#e8c068;
+  --text:#1c1208;--muted:#6b5a42;--dim:#9e8b72;
+  --card:#faf7f2;
+  --green:#2d7a4f;--red:#a63228;
+  --border:rgba(184,137,42,0.2);--border2:rgba(28,18,8,0.1);
+  --shadow:0 2px 20px rgba(28,18,8,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f5f0e8'/%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(28,18,8,0.03)'/%3E%3Ccircle cx='3' cy='3' r='0.5' fill='rgba(28,18,8,0.03)'/%3E%3C/svg%3E");
+pointer-events:none;z-index:0}
+
+/* Loading */
+#loading-screen{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:var(--espresso);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:9999;
+  transition:opacity 0.5s
+}
+.load-emblem{
+  width:64px;height:64px;border-radius:50%;
+  border:1px solid rgba(184,137,42,0.4);
+  background:rgba(184,137,42,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:20px;
+  animation:breathe 1.5s ease-in-out infinite
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.06);opacity:1}}
+.load-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--brass3);margin-bottom:8px}
+.load-bar{width:100px;height:1px;background:rgba(184,137,42,0.2);border-radius:1px;overflow:hidden;margin-top:12px}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--brass),var(--brass3));animation:fill 1.2s ease forwards}
+@keyframes fill{from{width:0}to{width:100%}}
+
+/* Back */
+.back-btn{
+  position:fixed;top:16px;left:16px;
+  background:rgba(28,18,8,0.75);backdrop-filter:blur(8px);
+  border:1px solid rgba(184,137,42,0.3);color:var(--brass3);
+  padding:9px 18px;border-radius:20px;font-size:13px;font-weight:500;
+  z-index:99;text-decoration:none;font-family:'Jost',sans-serif;letter-spacing:0.3px
+}
+
+/* Photo */
+.photo-wrap{
+  position:relative;width:100%;height:300px;overflow:hidden;
+  opacity:0;transform:translateY(-15px);
+  transition:all 0.9s cubic-bezier(0.22,1,0.36,1);
+  z-index:1
+}
+.photo-wrap.show{opacity:1;transform:translateY(0)}
+.dish-photo{width:100%;height:100%;object-fit:cover}
+.photo-fade{
+  position:absolute;bottom:0;left:0;width:100%;height:70%;
+  background:linear-gradient(transparent,var(--bg))
+}
+.photo-badges{position:absolute;top:58px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.pbadge{font-size:10px;font-weight:600;padding:4px 10px;border-radius:5px;letter-spacing:0.5px;text-transform:uppercase}
+.pbadge-chef{background:rgba(184,137,42,0.15);border:1px solid rgba(184,137,42,0.4);color:var(--brass);backdrop-filter:blur(4px)}
+.pbadge-best{background:rgba(28,18,8,0.7);border:1px solid rgba(184,137,42,0.3);color:var(--brass3);backdrop-filter:blur(4px)}
+.pbadge-new{background:rgba(45,122,79,0.15);border:1px solid rgba(45,122,79,0.4);color:var(--green);backdrop-filter:blur(4px)}
+
+/* Content */
+.content{padding:8px 20px 50px;position:relative;z-index:1}
+
+/* Name */
+.dish-name{
+  font-family:'Playfair Display',serif;font-size:32px;font-weight:700;
+  color:var(--espresso);line-height:1.2;margin-bottom:14px;
+  opacity:0;transform:translateX(-20px);
+  transition:all 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s
+}
+.dish-name.show{opacity:1;transform:translateX(0)}
+
+/* Badges */
+.badges-row{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;
+  opacity:0;transition:opacity 0.6s ease 0.4s
+}
+.badges-row.show{opacity:1}
+.type-pill{font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;letter-spacing:0.5px}
+.type-pill.veg{background:rgba(45,122,79,0.1);border:1px solid rgba(45,122,79,0.3);color:var(--green)}
+.type-pill.nonveg{background:rgba(166,50,40,0.1);border:1px solid rgba(166,50,40,0.3);color:var(--red)}
+.cat-pill{background:rgba(184,137,42,0.1);border:1px solid rgba(184,137,42,0.3);color:var(--brass);font-size:11px;font-weight:500;padding:5px 14px;border-radius:5px;letter-spacing:0.5px}
+
+/* Info card */
+.info-card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:20px;padding:20px 22px;margin-bottom:14px;
+  opacity:0;transform:translateY(16px);
+  transition:all 0.6s cubic-bezier(0.22,1,0.36,1);
+  box-shadow:var(--shadow)
+}
+.info-card.show{opacity:1;transform:translateY(0)}
+.card-label{font-size:10px;color:var(--brass);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+
+/* Price */
+.price-val{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;color:var(--espresso)}
+.price-val span{font-size:24px;color:var(--muted)}
+
+/* Rating */
+.rating-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.rating-big{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--espresso)}
+.rating-right{flex:1}
+.stars-big{display:flex;gap:3px;margin-bottom:4px}
+.star-big{font-size:18px;color:rgba(184,137,42,0.2)}
+.star-big.filled{color:var(--brass2)}
+.rev-count-big{font-size:12px;color:var(--dim)}
+
+/* Review */
+.review-item{
+  background:var(--bg);border-radius:12px;padding:13px 15px;margin-top:10px;
+  opacity:0;transform:translateX(-12px);transition:all 0.4s ease
+}
+.review-item.show{opacity:1;transform:translateX(0)}
+.rev-name{font-size:13px;font-weight:600;color:var(--espresso);margin-bottom:3px}
+.rev-stars{display:flex;gap:2px;margin-bottom:5px}
+.rev-star{font-size:12px;color:rgba(184,137,42,0.2)}
+.rev-star.f{color:var(--brass2)}
+.rev-comment{font-size:13px;color:var(--muted);line-height:1.5;font-style:italic;font-family:'Playfair Display',serif}
+
+/* Spice */
+.spice-bar{display:flex;gap:7px;margin-top:8px}
+.spice-seg{flex:1;height:8px;border-radius:4px;background:rgba(28,18,8,0.08);transition:background 0.4s}
+.spice-seg.hot{background:var(--red)}
+.spice-seg.med{background:var(--brass2)}
+.spice-label{font-size:12px;color:var(--dim);margin-top:7px}
+
+/* Ingredients */
+.ing-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.ing-tag{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--muted);padding:6px 14px;border-radius:6px;font-size:13px;
+  opacity:0;transform:scale(0.9);transition:all 0.3s ease
+}
+.ing-tag.show{opacity:1;transform:scale(1)}
+
+/* Description */
+.desc-text{
+  font-family:'Playfair Display',serif;font-style:italic;
+  color:var(--muted);font-size:15px;line-height:1.8
+}
+
+/* Ornament divider */
+.ornament{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ornament::before,.ornament::after{content:'';flex:1;height:1px;background:var(--border)}
+.ornament span{font-size:10px;color:var(--brass);letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="load-emblem">🍽️</div>
+  <div class="load-name" id="ls-rest">Sharma Dhaba</div>
+  <div class="load-bar"><div class="load-fill"></div></div>
+</div>
+
+<a class="back-btn" id="back-btn" href="index.html">← Menu</a>
+
+<div class="photo-wrap" id="photo-wrap">
+  <img class="dish-photo" id="dish-photo" src="" alt=""/>
+  <div class="photo-fade"></div>
+  <div class="photo-badges" id="photo-badges"></div>
+</div>
+
+<div class="content">
+  <div class="dish-name" id="dish-name"></div>
+  <div class="badges-row" id="badges-row"></div>
+
+  <div class="info-card" id="card-price">
+    <div class="card-label">Price</div>
+    <div class="price-val"><span>₹</span><span id="price-display">0</span></div>
+  </div>
+
+  <div class="info-card" id="card-rating">
+    <div class="card-label">Rating & Reviews</div>
+    <div class="rating-row">
+      <div class="rating-big" id="rating-num">0</div>
+      <div class="rating-right">
+        <div class="stars-big" id="stars-big"></div>
+        <div class="rev-count-big" id="rev-count"></div>
+      </div>
+    </div>
+    <div id="reviews-list"></div>
+  </div>
+
+  <div class="info-card" id="card-spice">
+    <div class="card-label">Spice Level</div>
+    <div class="spice-bar" id="spice-bar"></div>
+    <div class="spice-label" id="spice-label"></div>
+  </div>
+
+  <div class="info-card" id="card-ing">
+    <div class="card-label">Ingredients</div>
+    <div class="ing-grid" id="ing-grid"></div>
+  </div>
+
+  <div class="info-card" id="card-desc">
+    <div class="card-label">About This Dish</div>
+    <p class="desc-text" id="desc-text"></p>
+  </div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var dishId = parseInt(params.get('id'));
+var L = params.get('lang') || 'en';
+
+// Update back button to preserve language
+document.getElementById('back-btn').href = 'index.html';
+
+var spiceNames = {
+  en:['No Spice','Mild','Medium','Spicy','Very Spicy','Extra Hot 🌶️'],
+  hi:['बिना मसाला','हल्का','मध्यम','तीखा','बहुत तीखा','अत्यधिक तीखा 🌶️'],
+  bn:['মশলা নেই','হালকা','মাঝারি','ঝাল','খুব ঝাল','অত্যন্ত ঝাল 🌶️']
+};
+
+var typeNames = {
+  en:{veg:'Vegetarian',nonveg:'Non Vegetarian'},
+  hi:{veg:'शाकाहारी',nonveg:'मांसाहारी'},
+  bn:{veg:'নিরামিষ',nonveg:'আমিষ'}
+};
+
+var cardLabels = {
+  en:{price:'Price',rating:'Rating & Reviews',spice:'Spice Level',ing:'Ingredients',desc:'About This Dish'},
+  hi:{price:'कीमत',rating:'रेटिंग और समीक्षा',spice:'मसाले का स्तर',ing:'सामग्री',desc:'इस व्यंजन के बारे में'},
+  bn:{price:'মূল্য',rating:'রেটিং ও রিভিউ',spice:'মশলার মাত্রা',ing:'উপাদান',desc:'এই খাবার সম্পর্কে'}
+};
+
+function n(obj){ return typeof obj==='object'?(obj[L]||obj['en']):obj; }
+function lbl(k){ return (cardLabels[L]||cardLabels['en'])[k]; }
+
+function countUp(target){
+  var cur=0; var step=target/40;
+  var timer=setInterval(function(){
+    cur+=step;
+    if(cur>=target){cur=target;clearInterval(timer);}
+    document.getElementById('price-display').textContent=Math.floor(cur);
+  },16);
+}
+
+function buildStars(r){
+  var h='';
+  for(var i=1;i<=5;i++) h+='<span class="star-big'+(i<=Math.round(r)?' filled':'')+'">★</span>';
+  return h;
+}
+
+function buildSpice(level){
+  var h=''; var cls=level<=2?'med':'hot';
+  for(var i=1;i<=5;i++) h+='<div class="spice-seg'+(i<=level?' '+cls:'')+'"></div>';
+  document.getElementById('spice-bar').innerHTML=h;
+  var names=spiceNames[L]||spiceNames['en'];
+  document.getElementById('spice-label').textContent=level===0?names[0]:(names[level]||names[3]);
+}
+
+function showCard(id,delay){
+  setTimeout(function(){
+    var el=document.getElementById(id);
+    if(el) el.classList.add('show');
+  },delay);
+}
+
+// Update card labels based on language
+function applyCardLabels(){
+  document.querySelectorAll('.card-label').forEach(function(el,i){
+    var keys=['price','rating','spice','ing','desc'];
+    if(keys[i]) el.textContent=lbl(keys[i]);
+  });
+}
+
+fetch('menu.json')
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var dish=data.dishes.find(function(d){return d.id===dishId;});
+    if(!dish){window.location.href='index.html';return;}
+
+    document.getElementById('ls-rest').textContent=data.restaurant;
+
+    // Photo
+    var img=document.getElementById('dish-photo');
+    img.src=dish.photo;
+    img.onerror=function(){this.src='https://placehold.co/400x300/e4ddd1/b8892a?text=🍽';};
+
+    // Photo badges
+    var pb='';
+    if(dish.chef) pb+='<div class="pbadge pbadge-chef">Chef\'s Special</div>';
+    if(dish.bestseller) pb+='<div class="pbadge pbadge-best">Bestseller</div>';
+    if(dish.isNew) pb+='<div class="pbadge pbadge-new">New</div>';
+    document.getElementById('photo-badges').innerHTML=pb;
+
+    // Name
+    document.getElementById('dish-name').textContent=n(dish.name);
+
+    // Badges
+    var tn=typeNames[L]||typeNames['en'];
+    var br='<span class="type-pill '+dish.type+'">'+tn[dish.type]+'</span>';
+    br+='<span class="cat-pill">'+n(dish.category)+'</span>';
+    document.getElementById('badges-row').innerHTML=br;
+
+    // Rating
+    document.getElementById('rating-num').textContent=dish.rating.toFixed(1);
+    document.getElementById('stars-big').innerHTML=buildStars(dish.rating);
+    document.getElementById('rev-count').textContent=dish.reviews+' reviews';
+
+    // Reviews
+    var rh='';
+    if(dish.reviewsList){
+      dish.reviewsList.forEach(function(rev){
+        var rs='';
+        for(var i=1;i<=5;i++) rs+='<span class="rev-star'+(i<=rev.stars?' f':'')+'">★</span>';
+        rh+='<div class="review-item"><div class="rev-name">'+rev.name+'</div><div class="rev-stars">'+rs+'</div><div class="rev-comment">"'+rev.comment+'"</div></div>';
+      });
+    }
+    document.getElementById('reviews-list').innerHTML=rh;
+
+    // Spice
+    buildSpice(dish.spice);
+
+    // Ingredients
+    var ings=n(dish.ingredients).split(',').map(function(i){return i.trim();});
+    document.getElementById('ing-grid').innerHTML=ings.map(function(i){
+      return '<span class="ing-tag">'+i+'</span>';
+    }).join('');
+
+    // Description
+    document.getElementById('desc-text').textContent=n(dish.description);
+
+    // Apply language labels
+    applyCardLabels();
+
+    // Animate
+    setTimeout(function(){
+      document.getElementById('loading-screen').style.opacity='0';
+      setTimeout(function(){document.getElementById('loading-screen').style.display='none';},500);
+
+      setTimeout(function(){document.getElementById('photo-wrap').classList.add('show');},80);
+      setTimeout(function(){document.getElementById('dish-name').classList.add('show');},350);
+      setTimeout(function(){document.getElementById('badges-row').classList.add('show');},500);
+      showCard('card-price',600);
+      setTimeout(countUp.bind(null,dish.price),700);
+      showCard('card-rating',750);
+      setTimeout(function(){
+        document.querySelectorAll('.review-item').forEach(function(r,i){
+          setTimeout(function(){r.classList.add('show');},i*150);
+        });
+      },900);
+      showCard('card-spice',900);
+      showCard('card-ing',1050);
+      setTimeout(function(){
+        document.querySelectorAll('.ing-tag').forEach(function(t,i){
+          setTimeout(function(){t.classList.add('show');},i*70);
+        });
+      },1200);
+      showCard('card-desc',1200);
+    },1100);
+  })
+  .catch(function(){window.location.href='index.html';});
+</script>
+</body>
+  </html>
+  
