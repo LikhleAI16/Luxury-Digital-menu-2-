@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Digital Menu</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f0e8;--bg2:#ede8de;--bg3:#e4ddd1;
+  --espresso:#1c1208;--espresso2:#2e1f0d;--espresso3:#3d2b14;
+  --brass:#b8892a;--brass2:#d4a740;--brass3:#e8c068;
+  --text:#1c1208;--muted:#6b5a42;--dim:#9e8b72;
+  --card:#faf7f2;--white:#ffffff;
+  --green:#2d7a4f;--red:#a63228;
+  --border:rgba(184,137,42,0.2);--border2:rgba(28,18,8,0.1);
+  --shadow:0 2px 20px rgba(28,18,8,0.08);
+  --shadow2:0 8px 40px rgba(28,18,8,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:100px}
+
+/* Subtle linen texture */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f5f0e8'/%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(28,18,8,0.03)'/%3E%3Ccircle cx='3' cy='3' r='0.5' fill='rgba(28,18,8,0.03)'/%3E%3C/svg%3E");
+pointer-events:none;z-index:0}
+
+/* ═══ LANGUAGE SCREEN ═══ */
+#lang-screen{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:var(--espresso);
+  z-index:99999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:40px 28px;text-align:center;
+  transition:opacity 0.5s
+}
+.ls-top-line{width:60px;height:1px;background:var(--brass);margin:0 auto 24px;opacity:0.6}
+.ls-emblem{
+  width:72px;height:72px;border-radius:50%;
+  border:1px solid rgba(184,137,42,0.5);
+  background:rgba(184,137,42,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin:0 auto 18px;
+}
+.ls-name{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--brass3);margin-bottom:6px;letter-spacing:0.5px}
+.ls-tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:rgba(232,192,104,0.6);margin-bottom:40px}
+.ls-divider{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:20px}
+.ls-divider::before,.ls-divider::after{content:'';flex:1;height:1px;background:rgba(184,137,42,0.2)}
+.ls-divider span{font-size:10px;letter-spacing:3px;color:rgba(232,192,104,0.5);text-transform:uppercase;white-space:nowrap}
+.ls-options{display:flex;flex-direction:column;gap:10px;width:100%}
+.ls-btn{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(184,137,42,0.2);
+  border-radius:16px;padding:18px 20px;
+  display:flex;align-items:center;gap:16px;cursor:pointer;
+  touch-action:manipulation;text-align:left;font-family:'Jost',sans-serif;width:100%;
+  transition:all 0.2s;position:relative;overflow:hidden
+}
+.ls-btn:active{background:rgba(184,137,42,0.1);border-color:rgba(184,137,42,0.5);transform:scale(0.98)}
+.ls-flag{font-size:28px;flex-shrink:0}
+.ls-text{flex:1}
+.ls-lname{font-size:18px;font-weight:600;color:var(--brass3);display:block;margin-bottom:3px}
+.ls-lsub{font-size:12px;color:rgba(232,192,104,0.5);display:block;font-family:'Playfair Display',serif;font-style:italic}
+.ls-arrow{color:rgba(184,137,42,0.4);font-size:20px;font-weight:300}
+
+/* ═══ HEADER ═══ */
+.header{
+  position:relative;z-index:1;
+  background:var(--espresso);
+  padding:32px 22px 26px;text-align:center;
+}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.lang-switch{
+  background:transparent;border:1px solid rgba(184,137,42,0.4);
+  color:var(--brass2);padding:6px 14px;border-radius:20px;
+  font-size:11px;font-weight:600;cursor:pointer;
+  font-family:'Jost',sans-serif;touch-action:manipulation;letter-spacing:1px
+}
+.header-emblem{
+  width:52px;height:52px;border-radius:50%;
+  border:1px solid rgba(184,137,42,0.4);
+  background:rgba(184,137,42,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin:0 auto 14px
+}
+.rest-name{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brass3);letter-spacing:0.5px;margin-bottom:4px}
+.rest-tagline{font-family:'Playfair Display',serif;font-style:italic;color:rgba(232,192,104,0.55);font-size:13px}
+.header-ornament{display:flex;align-items:center;gap:10px;margin-top:16px;justify-content:center}
+.header-ornament::before,.header-ornament::after{content:'';width:30px;height:1px;background:rgba(184,137,42,0.4)}
+.header-ornament span{font-size:10px;color:rgba(184,137,42,0.5);letter-spacing:2px}
+
+/* ═══ SEARCH ═══ */
+.search-wrap{padding:18px 18px 8px;position:relative;z-index:1}
+.search-inner{position:relative}
+.search-box{
+  width:100%;background:var(--card);
+  border:1px solid var(--border2);border-radius:14px;
+  padding:13px 16px 13px 44px;color:var(--text);
+  font-size:14px;font-family:'Jost',sans-serif;outline:none;
+  box-shadow:var(--shadow);transition:border-color 0.2s
+}
+.search-box:focus{border-color:var(--brass)}
+.search-box::placeholder{color:var(--dim)}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:16px;opacity:0.4}
+
+/* ═══ FILTERS ═══ */
+.filter-wrap{padding:10px 18px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;z-index:1;position:relative}
+.filter-wrap::-webkit-scrollbar{display:none}
+.filter-tab{
+  background:var(--card);border:1px solid var(--border2);
+  color:var(--muted);padding:8px 18px;border-radius:30px;
+  font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;
+  font-family:'Jost',sans-serif;touch-action:manipulation;
+  box-shadow:var(--shadow);transition:all 0.2s;letter-spacing:0.3px
+}
+.filter-tab.active{background:var(--espresso);border-color:var(--espresso);color:var(--brass3)}
+
+/* ═══ MENU ═══ */
+#menu-container{padding:0 16px 24px;position:relative;z-index:1}
+.cat-wrap{padding:22px 2px 12px;display:flex;align-items:center;gap:14px}
+.cat-line{flex:1;height:1px;background:var(--border)}
+.cat-name{font-family:'Playfair Display',serif;font-size:12px;color:var(--brass);letter-spacing:3px;text-transform:uppercase;white-space:nowrap}
+
+/* Dish card */
+.dish-card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:18px;padding:14px;margin-bottom:10px;
+  display:flex;align-items:center;gap:14px;
+  text-decoration:none;color:var(--text);position:relative;
+  overflow:hidden;box-shadow:var(--shadow);
+  transition:transform 0.15s,box-shadow 0.15s
+}
+.dish-card:active{transform:scale(0.98);box-shadow:var(--shadow2)}
+.dish-thumb{
+  width:80px;height:80px;border-radius:14px;
+  object-fit:cover;border:1px solid var(--border2);
+  flex-shrink:0;background:var(--bg3)
+}
+.dish-info{flex:1;min-width:0;padding-right:26px}
+.dish-name-text{
+  font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+  margin-bottom:5px;color:var(--espresso);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.dish-meta{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.type-pill{
+  font-size:10px;font-weight:600;padding:2px 8px;
+  border-radius:4px;letter-spacing:0.3px
+}
+.type-pill.veg{background:rgba(45,122,79,0.1);border:1px solid rgba(45,122,79,0.3);color:var(--green)}
+.type-pill.nonveg{background:rgba(166,50,40,0.1);border:1px solid rgba(166,50,40,0.3);color:var(--red)}
+.stars{display:flex;gap:1px}
+.star{font-size:11px;color:rgba(184,137,42,0.2)}
+.star.filled{color:var(--brass2)}
+.rev-count{font-size:10px;color:var(--dim)}
+.dish-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--espresso2)}
+.card-badges{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.badge{font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;letter-spacing:0.5px;text-transform:uppercase}
+.badge-chef{background:rgba(184,137,42,0.12);border:1px solid rgba(184,137,42,0.35);color:var(--brass)}
+.badge-best{background:rgba(28,18,8,0.06);border:1px solid rgba(28,18,8,0.15);color:var(--espresso3)}
+.badge-new{background:rgba(45,122,79,0.1);border:1px solid rgba(45,122,79,0.3);color:var(--green)}
+.card-chevron{position:absolute;bottom:14px;right:14px;color:var(--dim);font-size:14px}
+.no-results{text-align:center;padding:60px 20px;color:var(--dim)}
+
+/* ═══ BILL FAB ═══ */
+.bill-fab{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--espresso);color:var(--brass3);
+  border:1px solid rgba(184,137,42,0.3);
+  padding:15px 36px;border-radius:50px;
+  font-size:14px;font-weight:600;font-family:'Jost',sans-serif;
+  cursor:pointer;z-index:998;
+  box-shadow:0 8px 32px rgba(28,18,8,0.25),0 0 0 1px rgba(184,137,42,0.1);
+  touch-action:manipulation;white-space:nowrap;letter-spacing:0.5px
+}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(28,18,8,0.7);backdrop-filter:blur(4px);
+  z-index:9998;display:none;align-items:flex-end;justify-content:center
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:var(--bg);border-top:1px solid var(--border);
+  border-radius:28px 28px 0 0;width:100%;max-height:92vh;
+  overflow-y:auto;padding:26px 20px 44px;
+  animation:slideup 0.38s cubic-bezier(0.22,1,0.36,1);
+  box-shadow:0 -8px 40px rgba(28,18,8,0.15)
+}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border2)}
+.modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--espresso)}
+.modal-close{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--muted);width:32px;height:32px;border-radius:50%;
+  font-size:16px;cursor:pointer;font-family:'Jost',sans-serif;
+  touch-action:manipulation;display:flex;align-items:center;justify-content:center
+}
+.step{display:none}
+.step.active{display:block}
+.step-hint{font-size:12px;color:var(--dim);margin-bottom:16px;text-align:center;letter-spacing:0.3px}
+
+/* Bill items */
+.bill-item{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:14px;padding:13px 16px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)
+}
+.bill-item-info{flex:1}
+.bill-item-name{font-size:14px;font-weight:600;margin-bottom:3px;color:var(--espresso)}
+.bill-item-price{font-family:'Playfair Display',serif;font-size:14px;color:var(--brass)}
+.qty-ctrl{display:flex;align-items:center;gap:10px}
+.qty-btn{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--espresso);width:30px;height:30px;border-radius:50%;
+  font-size:18px;cursor:pointer;font-family:'Jost',sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;line-height:1
+}
+.qty-num{font-size:15px;font-weight:600;color:var(--espresso);min-width:20px;text-align:center}
+
+/* Summary */
+.bill-summary{
+  background:var(--espresso);border-radius:16px;
+  padding:18px 20px;margin:16px 0
+}
+.bill-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:rgba(232,192,104,0.6)}
+.bill-row.total{
+  border-top:1px solid rgba(184,137,42,0.2);
+  margin-top:10px;padding-top:14px;
+  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
+  color:var(--brass3)
+}
+
+/* Buttons */
+.proceed-btn{
+  width:100%;background:var(--espresso);color:var(--brass3);
+  border:1px solid rgba(184,137,42,0.3);padding:16px;border-radius:14px;
+  font-size:14px;font-weight:600;font-family:'Jost',sans-serif;
+  cursor:pointer;touch-action:manipulation;letter-spacing:0.5px
+}
+.proceed-btn:disabled{opacity:0.3;cursor:not-allowed}
+.input-label{font-size:11px;color:var(--brass);font-weight:600;margin-bottom:8px;display:block;margin-top:16px;letter-spacing:1.5px;text-transform:uppercase}
+.phone-input{
+  width:100%;background:var(--card);border:1px solid var(--border2);
+  border-radius:12px;padding:14px 16px;color:var(--espresso);
+  font-size:18px;font-family:'Jost',sans-serif;outline:none;
+  letter-spacing:3px;box-shadow:var(--shadow)
+}
+.phone-input:focus{border-color:var(--brass)}
+.phone-input::placeholder{color:var(--dim);letter-spacing:0;font-size:14px}
+.bill-preview{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:12px;padding:16px;margin:12px 0;
+  font-size:13px;color:var(--muted);line-height:2;
+  max-height:160px;overflow-y:auto;
+  font-family:'Playfair Display',serif;box-shadow:var(--shadow)
+}
+.whatsapp-btn{
+  width:100%;background:linear-gradient(135deg,#25D366,#128C7E);
+  color:white;border:none;padding:16px;border-radius:14px;
+  font-size:14px;font-weight:600;font-family:'Jost',sans-serif;
+  cursor:pointer;touch-action:manipulation;
+  display:flex;align-items:center;justify-content:center;gap:10px
+}
+.back-step{
+  width:100%;background:transparent;border:1px solid var(--border2);
+  color:var(--muted);padding:12px;border-radius:12px;font-size:13px;
+  font-family:'Jost',sans-serif;cursor:pointer;margin-top:10px;touch-action:manipulation
+}
+.success-wrap{text-align:center;padding:30px 0}
+.success-check{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(45,122,79,0.1);border:1.5px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin:0 auto 20px;color:var(--green)
+}
+.success-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--espresso);margin-bottom:12px}
+.success-text{color:var(--muted);font-size:14px;line-height:1.8;margin-bottom:24px}
+.done-btn{
+  background:var(--espresso);color:var(--brass3);
+  border:1px solid rgba(184,137,42,0.3);padding:14px 44px;
+  border-radius:12px;font-size:14px;font-weight:600;
+  font-family:'Jost',sans-serif;cursor:pointer;touch-action:manipulation
+}
+#loading{text-align:center;padding:70px 20px}
+.load-ring{width:36px;height:36px;border:1.5px solid var(--border2);border-top-color:var(--brass);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-size:12px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.footer{text-align:center;padding:24px;color:var(--dim);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<!-- ═══ LANGUAGE SCREEN ═══ -->
+<div id="lang-screen">
+  <div class="ls-top-line"></div>
+  <div class="ls-emblem">🍽️</div>
+  <h1 class="ls-name" id="ls-name">Sharma Dhaba</h1>
+  <p class="ls-tagline" id="ls-tagline">Taste the Tradition</p>
+  <div class="ls-divider"><span>Select Language</span></div>
+  <div class="ls-options">
+    <button class="ls-btn" onclick="selectLang('en')">
+      <span class="ls-flag">🇬🇧</span>
+      <span class="ls-text">
+        <span class="ls-lname">English</span>
+        <span class="ls-lsub">Continue in English</span>
+      </span>
+      <span class="ls-arrow">›</span>
+    </button>
+    <button class="ls-btn" onclick="selectLang('hi')">
+      <span class="ls-flag">🇮🇳</span>
+      <span class="ls-text">
+        <span class="ls-lname">हिंदी</span>
+        <span class="ls-lsub">हिंदी में जारी रखें</span>
+      </span>
+      <span class="ls-arrow">›</span>
+    </button>
+    <button class="ls-btn" onclick="selectLang('bn')">
+      <span class="ls-flag">🇧🇩</span>
+      <span class="ls-text">
+        <span class="ls-lname">বাংলা</span>
+        <span class="ls-lsub">বাংলায় চালিয়ে যান</span>
+      </span>
+      <span class="ls-arrow">›</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-top">
+    <div style="width:56px"></div>
+    <div></div>
+    <button class="lang-switch" id="lang-btn" onclick="cycleLang()">EN</button>
+  </div>
+  <div class="header-emblem">🍽️</div>
+  <h1 class="rest-name" id="rest-name">Loading...</h1>
+  <p class="rest-tagline" id="rest-tagline"></p>
+  <div class="header-ornament"><span>✦</span></div>
+</div>
+
+<!-- ═══ SEARCH ═══ -->
+<div class="search-wrap">
+  <div class="search-inner">
+    <span class="search-icon">🔍</span>
+    <input class="search-box" id="search-input" type="text" placeholder="Search dishes..." oninput="filterMenu()"/>
+  </div>
+</div>
+
+<!-- ═══ FILTERS ═══ -->
+<div class="filter-wrap" id="filter-wrap">
+  <button class="filter-tab active" onclick="setFilter('all',this)" id="ft-all">All</button>
+  <button class="filter-tab" onclick="setFilter('veg',this)" id="ft-veg">Vegetarian</button>
+  <button class="filter-tab" onclick="setFilter('nonveg',this)" id="ft-nonveg">Non Veg</button>
+  <button class="filter-tab" onclick="setFilter('chef',this)" id="ft-chef">Chef's Pick</button>
+  <button class="filter-tab" onclick="setFilter('bestseller',this)" id="ft-best">Bestseller</button>
+</div>
+
+<!-- ═══ MENU ═══ -->
+<div id="menu-container">
+  <div id="loading">
+    <div class="load-ring"></div>
+    <div class="load-text">Loading menu</div>
+  </div>
+</div>
+
+<div class="footer" id="footer-text">Digital Menu</div>
+
+<!-- ═══ BILL BUTTON ═══ -->
+<button class="bill-fab" id="bill-fab" onclick="openBill()">🧾 My Bill</button>
+
+<!-- ═══ BILL MODAL ═══ -->
+<div class="modal-overlay" id="bill-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">My Bill</span>
+      <button class="modal-close" onclick="closeBill()">✕</button>
+    </div>
+    <!-- Step 1 -->
+    <div class="step active" id="step1">
+      <p class="step-hint" id="step-hint">Select items and quantities</p>
+      <div id="bill-items-list"></div>
+      <div class="bill-summary">
+        <div class="bill-row"><span id="lbl-sub">Subtotal</span><span id="subtotal-val">₹0</span></div>
+        <div class="bill-row"><span id="lbl-gst">GST (5%)</span><span id="gst-val">₹0</span></div>
+        <div class="bill-row total"><span id="lbl-total">Total</span><span id="total-val">₹0</span></div>
+      </div>
+      <button class="proceed-btn" id="proceed-btn" onclick="goStep2()" disabled id="proceed-btn">Continue →</button>
+    </div>
+    <!-- Step 2 -->
+    <div class="step" id="step2">
+      <label class="input-label" id="lbl-phone">Customer's WhatsApp Number</label>
+      <input class="phone-input" id="phone-input" type="tel" placeholder="Enter customer number" maxlength="10"/>
+      <label class="input-label" id="lbl-preview">Bill Preview</label>
+      <div class="bill-preview" id="bill-preview-text"></div>
+      <button class="whatsapp-btn" onclick="sendBill()">
+        <span>📲</span><span id="lbl-send">Send Bill to Customer via WhatsApp</span>
+      </button>
+      <button class="back-step" onclick="showStep(1)" id="lbl-back">← Go Back</button>
+    </div>
+    <!-- Step 3 -->
+    <div class="step" id="step3">
+      <div class="success-wrap">
+        <div class="success-check">✓</div>
+        <div class="success-title" id="success-title">Bill Sent</div>
+        <p class="success-text" id="success-text">Bill has been sent to customer's WhatsApp. Please collect payment. Thank you!</p>
+        <button class="done-btn" onclick="closeBill()" id="lbl-done">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────
+var OWNER_WHATSAPP = '919876543210';
+var GST = 5;
+// ────────────────────────────
+
+var menuData = null;
+var quantities = {};
+var currentFilter = 'all';
+var L = 'en';
+
+var LANGS = ['en','hi','bn'];
+
+var T = {
+  en:{
+    search:'Search dishes...',bill:'🧾 My Bill',hint:'Select items and quantities',
+    sub:'Subtotal',gst:'GST (5%)',total:'Total',proceed:'Continue →',
+    phoneLabel:'Customer\'s WhatsApp Number',phonePh:'Enter customer number',
+    preview:'Bill Preview',send:'Send Bill to Customer via WhatsApp',
+    back:'← Go Back',successTitle:'Bill Sent',
+    successText:'Bill has been sent to customer\'s WhatsApp.\nPlease collect payment from customer.\nThank you!',
+    done:'Done',all:'All',veg:'Vegetarian',nonveg:'Non Veg',chef:'Chef\'s Pick',best:'Bestseller',
+    modalTitle:'My Bill',nextLang:'हि'
+  },
+  hi:{
+    search:'व्यंजन खोजें...',bill:'🧾 मेरा बिल',hint:'आइटम और मात्रा चुनें',
+    sub:'उप-कुल',gst:'जीएसटी (5%)',total:'कुल',proceed:'आगे बढ़ें →',
+    phoneLabel:'ग्राहक का WhatsApp नंबर',phonePh:'ग्राहक का नंबर दर्ज करें',
+    preview:'बिल पूर्वावलोकन',send:'WhatsApp पर ग्राहक को बिल भेजें',
+    back:'← वापस',successTitle:'बिल भेजा गया',
+    successText:'ग्राहक के WhatsApp पर बिल भेज दिया गया।\nग्राहक से भुगतान लें।\nधन्यवाद!',
+    done:'हो गया',all:'सभी',veg:'शाकाहारी',nonveg:'मांसाहारी',chef:'शेफ की पसंद',best:'बेस्टसेलर',
+    modalTitle:'मेरा बिल',nextLang:'বাং'
+  },
+  bn:{
+    search:'খাবার খুঁজুন...',bill:'🧾 আমার বিল',hint:'আইটেম এবং পরিমাণ বেছে নিন',
+    sub:'সাবটোটাল',gst:'জিএসটি (5%)',total:'মোট',proceed:'এগিয়ে যান →',
+    phoneLabel:'গ্রাহকের WhatsApp নম্বর',phonePh:'গ্রাহকের নম্বর দিন',
+    preview:'বিলের পূর্বরূপ',send:'WhatsApp এ গ্রাহককে বিল পাঠান',
+    back:'← ফিরে যান',successTitle:'বিল পাঠানো হয়েছে',
+    successText:'গ্রাহকের WhatsApp এ বিল পাঠানো হয়েছে।\nগ্রাহকের কাছ থেকে পেমেন্ট নিন।\nধন্যবাদ!',
+    done:'সম্পন্ন',all:'সব',veg:'নিরামিষ',nonveg:'আমিষ',chef:'শেফের পছন্দ',best:'বেস্টসেলার',
+    modalTitle:'আমার বিল',nextLang:'EN'
+  }
+};
+
+function t(key){ return T[L][key] || T['en'][key]; }
+
+function selectLang(lang){
+  L = lang;
+  var s = document.getElementById('lang-screen');
+  s.style.opacity='0';
+  setTimeout(function(){ s.style.display='none'; },500);
+  applyLang();
+}
+
+function cycleLang(){
+  var i = LANGS.indexOf(L);
+  L = LANGS[(i+1)%LANGS.length];
+  applyLang();
+  if(menuData) renderMenu();
+}
+
+function applyLang(){
+  var nt = T[L].nextLang;
+  document.getElementById('lang-btn').textContent = nt;
+  document.getElementById('search-input').placeholder = t('search');
+  document.getElementById('bill-fab').textContent = t('bill');
+  document.getElementById('step-hint').textContent = t('hint');
+  document.getElementById('lbl-sub').textContent = t('sub');
+  document.getElementById('lbl-gst').textContent = t('gst');
+  document.getElementById('lbl-total').textContent = t('total');
+  document.getElementById('proceed-btn').textContent = t('proceed');
+  document.getElementById('lbl-phone').textContent = t('phoneLabel');
+  document.getElementById('phone-input').placeholder = t('phonePh');
+  document.getElementById('lbl-preview').textContent = t('preview');
+  document.getElementById('lbl-send').textContent = t('send');
+  document.getElementById('lbl-back').textContent = t('back');
+  document.getElementById('success-title').textContent = t('successTitle');
+  document.getElementById('success-text').innerHTML = t('successText').replace(/\n/g,'<br>');
+  document.getElementById('lbl-done').textContent = t('done');
+  document.getElementById('modal-title').textContent = t('modalTitle');
+  document.getElementById('ft-all').textContent = t('all');
+  document.getElementById('ft-veg').textContent = t('veg');
+  document.getElementById('ft-nonveg').textContent = t('nonveg');
+  document.getElementById('ft-chef').textContent = t('chef');
+  document.getElementById('ft-best').textContent = t('best');
+}
+
+function g(id){ return (menuData&&menuData.dishes||[]).find(function(d){return d.id===id;}); }
+function n(obj){ return typeof obj==='object' ? (obj[L]||obj['en']) : obj; }
+
+function setFilter(f,el){
+  currentFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(function(x){x.classList.remove('active');});
+  el.classList.add('active');
+  renderMenu();
+}
+
+function filterMenu(){ renderMenu(); }
+
+function stars(r){
+  var h='';
+  for(var i=1;i<=5;i++) h+='<span class="star'+(i<=Math.round(r)?' filled':'')+'">★</span>';
+  return h;
+}
+
+function renderMenu(){
+  if(!menuData) return;
+  var search = document.getElementById('search-input').value.toLowerCase();
+  var cats = {};
+  menuData.dishes.forEach(function(dish){
+    var dname = n(dish.name).toLowerCase();
+    var ding = n(dish.ingredients).toLowerCase();
+    var ms = dname.includes(search)||ding.includes(search);
+    var mf = currentFilter==='all'||
+      (currentFilter==='veg'&&dish.type==='veg')||
+      (currentFilter==='nonveg'&&dish.type==='nonveg')||
+      (currentFilter==='chef'&&dish.chef)||
+      (currentFilter==='bestseller'&&dish.bestseller);
+    if(ms&&mf){
+      var cat = n(dish.category);
+      if(!cats[cat]) cats[cat]=[];
+      cats[cat].push(dish);
+    }
+  });
+  var html='';
+  var keys=Object.keys(cats);
+  if(!keys.length){
+    html='<div class="no-results" style="padding:60px 20px;text-align:center;color:var(--dim)"><p style="font-size:32px;margin-bottom:10px">🍽️</p><p>No dishes found</p></div>';
+  } else {
+    keys.forEach(function(cat){
+      html+='<div class="cat-wrap"><div class="cat-line"></div><div class="cat-name">'+cat+'</div><div class="cat-line"></div></div>';
+      cats[cat].forEach(function(dish){
+        var badges='';
+        if(dish.chef) badges+='<span class="badge badge-chef">Chef\'s Special</span>';
+        if(dish.bestseller) badges+='<span class="badge badge-best">Bestseller</span>';
+        if(dish.isNew) badges+='<span class="badge badge-new">New</span>';
+        var vl = dish.type==='veg'?(L==='hi'?'शाकाहारी':L==='bn'?'নিরামিষ':'Vegetarian'):(L==='hi'?'मांसाहारी':L==='bn'?'আমিষ':'Non Veg');
+        html+='<a class="dish-card" href="dish.html?id='+dish.id+'&lang='+L+'">' +
+          '<img class="dish-thumb" src="'+dish.photo+'" onerror="this.src=\'https://placehold.co/80x80/e4ddd1/b8892a?text=🍽\'">' +
+          '<div class="dish-info">' +
+            '<div class="dish-name-text">'+n(dish.name)+'</div>' +
+            '<div class="dish-meta"><span class="type-pill '+dish.type+'">'+vl+'</span></div>' +
+            '<div class="dish-meta"><div class="stars">'+stars(dish.rating)+'</div><span class="rev-count">('+dish.reviews+')</span></div>' +
+            '<div class="dish-price">₹'+dish.price+'</div>' +
+          '</div>' +
+          '<div class="card-badges">'+badges+'</div>' +
+          '<div class="card-chevron">›</div>' +
+        '</a>';
+      });
+    });
+  }
+  document.getElementById('menu-container').innerHTML=html;
+}
+
+// ── BILL SYSTEM ──
+function openBill(){
+  quantities={};
+  buildBillItems();
+  updateTotal();
+  showStep(1);
+  document.getElementById('bill-modal').classList.add('open');
+}
+
+function closeBill(){
+  document.getElementById('bill-modal').classList.remove('open');
+  document.getElementById('phone-input').value='';
+}
+
+function showStep(n){
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('step'+n).classList.add('active');
+}
+
+function buildBillItems(){
+  if(!menuData) return;
+  var html='';
+  menuData.dishes.forEach(function(dish){
+    quantities[dish.id]=0;
+    html+='<div class="bill-item">' +
+      '<div class="bill-item-info">' +
+        '<div class="bill-item-name">'+n(dish.name)+'</div>' +
+        '<div class="bill-item-price">₹'+dish.price+' each</div>' +
+      '</div>' +
+      '<div class="qty-ctrl">' +
+        '<button class="qty-btn" onclick="changeQty('+dish.id+',-1)">−</button>' +
+        '<span class="qty-num" id="qty-'+dish.id+'">0</span>' +
+        '<button class="qty-btn" onclick="changeQty('+dish.id+',1)">+</button>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById('bill-items-list').innerHTML=html;
+}
+
+function changeQty(id,delta){
+  quantities[id]=Math.max(0,(quantities[id]||0)+delta);
+  document.getElementById('qty-'+id).textContent=quantities[id];
+  updateTotal();
+}
+
+function updateTotal(){
+  if(!menuData) return;
+  var sub=0;
+  menuData.dishes.forEach(function(d){sub+=(quantities[d.id]||0)*d.price;});
+  var gst=Math.round(sub*GST/100);
+  var total=sub+gst;
+  document.getElementById('subtotal-val').textContent='₹'+sub;
+  document.getElementById('gst-val').textContent='₹'+gst;
+  document.getElementById('total-val').textContent='₹'+total;
+  document.getElementById('proceed-btn').disabled=sub===0;
+}
+
+function goStep2(){
+  var sub=0;
+  if(menuData) menuData.dishes.forEach(function(d){sub+=(quantities[d.id]||0)*d.price;});
+  if(sub===0){alert('Please select at least one item.');return;}
+  buildPreview();
+  showStep(2);
+}
+
+function buildPreview(){
+  if(!menuData) return;
+  var now=new Date();
+  var date=now.toLocaleDateString('en-IN');
+  var time=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  var sub=0; var lines='';
+  menuData.dishes.forEach(function(d){
+    var q=quantities[d.id]||0;
+    if(q>0){var a=q*d.price;sub+=a;lines+=n(d.name)+' × '+q+' — ₹'+a+'<br>';}
+  });
+  var gst=Math.round(sub*GST/100);
+  var total=sub+gst;
+  document.getElementById('bill-preview-text').innerHTML=
+    '<b>'+menuData.restaurant+'</b><br>'+menuData.address+'<br>'+date+' · '+time+'<br><br>'+
+    lines+'<br>'+t('sub')+': ₹'+sub+'<br>'+t('gst')+': ₹'+gst+'<br><b>'+t('total')+': ₹'+total+'</b>';
+}
+
+function sendBill(){
+  var phone=document.getElementById('phone-input').value.trim();
+  if(phone.length<6){
+    document.getElementById('phone-input').style.borderColor='var(--red)';
+    document.getElementById('phone-input').focus();
+    return;
+  }
+  document.getElementById('phone-input').style.borderColor='';
+  if(!menuData) return;
+  var now=new Date();
+  var date=now.toLocaleDateString('en-IN');
+  var time=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  var sub=0; var lines='';
+  menuData.dishes.forEach(function(d){
+    var q=quantities[d.id]||0;
+    if(q>0){var a=q*d.price;sub+=a;lines+='• '+n(d.name)+' × '+q+' = ₹'+a+'\n';}
+  });
+  var gst=Math.round(sub*GST/100);
+  var total=sub+gst;
+
+  // Owner opens WhatsApp with pre-written bill to send to customer
+  var custNum='91'+phone;
+  var msg=
+    '🍽️ *'+menuData.restaurant+'*\n'+
+    '_'+menuData.address+'_\n'+
+    '_'+menuData.phone+'_\n\n'+
+    '🧾 *Bill Summary*\n'+
+    '📅 '+date+' · ⏰ '+time+'\n'+
+    '─────────────────\n'+
+    lines+
+    '─────────────────\n'+
+    t('sub')+': ₹'+sub+'\n'+
+    t('gst')+': ₹'+gst+'\n'+
+    '*'+t('total')+': ₹'+total+'*\n'+
+    '─────────────────\n'+
+    '_'+menuData.restaurant+' thanks you for dining with us!_ 🙏';
+
+  // Opens owner's WhatsApp to send bill TO customer
+  window.open('https://wa.me/'+custNum+'?text='+encodeURIComponent(msg),'_blank');
+  showStep(3);
+}
+
+// ── LOAD ──
+fetch('menu.json')
+  .then(function(r){return r.json();})
+  .then(function(data){
+    menuData=data;
+    document.getElementById('rest-name').textContent=data.restaurant;
+    document.getElementById('rest-tagline').textContent=data.tagline;
+    document.getElementById('ls-name').textContent=data.restaurant;
+    document.getElementById('ls-tagline').textContent=data.tagline;
+    document.getElementById('footer-text').textContent=data.restaurant;
+    renderMenu();
+  })
+  .catch(function(){
+    document.getElementById('loading').innerHTML='<p style="color:var(--red);font-size:13px">Error loading menu.</p>';
+  });
+</script>
+</body>
+</html>
